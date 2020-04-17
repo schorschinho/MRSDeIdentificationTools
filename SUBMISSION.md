@@ -1,4 +1,4 @@
-Developer: Georg Oeltzschner
+Developer: Georg Oeltzschner, Mark Mikkelsen
 Name of the software: MRS DeIdentification Tools
 Abstract: MATLAB tools to remove protected health information (PHI) from magnetic resonance spectroscopy data.
 Languages: MATLAB
