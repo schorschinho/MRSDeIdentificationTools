@@ -35,7 +35,7 @@ function GEDeIdentify(fnames)
 %       2016-08-09: + Function created
 %       2018-09-05: + Smarter parsing of P-file header
 %       2018-09-25: + Minor bug fix
-
+%       2020-10-23: + Added support for rdbm_rev_num 27.x
 
 if nargin < 1 % De-identify all P-files in current directory
     
@@ -229,7 +229,7 @@ else
         fseek(pfile_fid, 1500, 'bof');
         hdr.series_offset = fread(pfile_fid, 1, 'integer*4');
     elseif rdbm_rev_num > 11.0
-        chkRev = {'14.3','16','24','26.002'};
+        chkRev = {'14.3','16','20.006','20.007','24','26.002','27','27.001'};
         if ~any(strcmp(num2str(rdbm_rev_num), chkRev))
             fclose(pfile_fid);
             fclose(pfile_fid_noID);
@@ -249,7 +249,7 @@ else
                 rdb_hdr_da_yres       = 53;
                 rdb_hdr_dab_start_rcv = 101;
                 rdb_hdr_dab_stop_rcv  = 102;
-            case '26.002'
+            case {'26.002','27','27.001'}
                 rdb_hdr_off_image     = 11;
                 rdb_hdr_off_data      = 2;
                 rdb_hdr_off_exam      = 9;
@@ -268,17 +268,17 @@ else
         frewind(pfile_fid);
         hdr_value = fread(pfile_fid, rdb_hdr_dab_stop_rcv, 'integer*2');
         
-        hdr.hdr_sz = i_hdr_value(rdb_hdr_off_data);
-        hdr.exam_offset = i_hdr_value(rdb_hdr_off_exam);
+        hdr.hdr_sz        = i_hdr_value(rdb_hdr_off_data);
+        hdr.exam_offset   = i_hdr_value(rdb_hdr_off_exam);
         hdr.series_offset = i_hdr_value(rdb_hdr_off_series);
         
         hdr.n_echoes = hdr_value(rdb_hdr_nechoes);
         hdr.point_sz = hdr_value(rdb_hdr_point_size);
         hdr.n_points = hdr_value(rdb_hdr_da_xres);
-        hdr.n_rows = hdr_value(rdb_hdr_da_yres);
-        start_recv = hdr_value(rdb_hdr_dab_start_rcv);
-        stop_recv = hdr_value(rdb_hdr_dab_stop_rcv);
-        hdr.n_rcvrs = (stop_recv - start_recv) + 1;
+        hdr.n_rows   = hdr_value(rdb_hdr_da_yres);
+        start_recv   = hdr_value(rdb_hdr_dab_start_rcv);
+        stop_recv    = hdr_value(rdb_hdr_dab_stop_rcv);
+        hdr.n_rcvrs  = (stop_recv - start_recv) + 1;
     end
 end
 
